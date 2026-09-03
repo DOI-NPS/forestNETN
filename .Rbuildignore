@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^testing_scripts$
+^data/.+$
+^temp_scripts$
+^LICENSE\.md$
+[.]html$
+[.]rmd$
+^docs/.+$

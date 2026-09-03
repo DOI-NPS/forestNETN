@@ -1,0 +1,594 @@
+---
+output: 
+  html_document:
+    css: www/styles.css
+title: "Using forestNETN R pkg." 
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F)
+options(width = 10)
+```
+
+```{css echo = FALSE}
+.indent {
+margin-left: 25px;
+font-size: 14px;
+}
+
+.indent2 {
+margin-left: 50px;
+font-size: 12px;
+}
+
+.drop{
+  font-family: "Arial",Arial,sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  padding:0px 0px 0px 0px;
+  margin:0px 0px 0px 0px;
+}
+
+.fxn{
+  color:#1942B5;
+  font-size:14px;
+  font-weight: bold;
+}
+
+.title{
+ display:none;
+}
+/*
+h4{
+  color:#1942B5;
+}
+*/
+```
+
+```{r echo = F, include = F}
+print_head <- function(df){
+  row_end <- ifelse(nrow(df) >= 6, 6, nrow(df))
+  knitr::kable(df[1:row_end,]) |> #, table.attr = "style='width:60%;'") |> 
+    kableExtra::kable_classic(full_width = T, font_size = 12, 
+                              bootstrap_options = c("condensed"))
+}
+
+library(tidyverse)
+```
+
+## Using the forestNETN R package {.tabset .tabset-pills}
+
+### Getting started {.tabset}
+
+#### Installation
+<h3><b>Step 1.</b> Install the latest version of R, RStudio, and RTools44</h3>
+If you're on an NPS computer, use the Company Portal to install required software. If not on an NPS computer, use the following links: 
+<ul>
+<li><a href="https://cran.r-project.org/bin/windows/base/old/4.5.3/R-4.5.3-win.exe">R-4.5.3 for Windows</a></li>
+<li><a href="https://download1.rstudio.org/electron/windows/RStudio-2026.08.2-200.exe">RStudio Desktop for Windows version 2026.08.2-200</a></li>
+<li><a href="https://cran.r-project.org/bin/windows/Rtools/rtools45/files/rtools45-6768-6492.exe">RTools45</a></li>
+</ul>
+<h3><b>Step 2.</b> Install pak package in R:</h3>
+```{r, eval = F}
+install.packages('pak')
+```
+<h3><b>Step 3.</b> Install forestNETN from GitHub</h3>
+Note that whenever the `forestNETN` package is updated, you can rerun this code to install the latest version.
+```{r, eval = F}
+library(pak)
+pak::pkg_install('doi-nps/forestNETN')
+```
+<h3><b>Step 4.</b> Load forestNETN R package</h3>
+```{r}
+library(forestNETN)
+```
+<h3><b>Step 5.</b> Import forestNETN data</h3>
+Note that R is not able to connect to files on Sharepoint or MS Teams (b/c Teams also stores all files on Sharepoint). That means you need to store data package files on your local machine or on a network server. The default option for importing data will add the data package views (i.e., flatfiles) to an environment called VIEWS_NETN to your Environment work space (i.e. Environment tab in top right panel). If you would rather import each individual view into your R session, specify with the new_env argument (e.g., `importData(new_env = F)`). 
+
+The NETN forest data package is organized as a series of stand alone views (i.e., csvs) of stand, tree, sapling, seedling, herbaceous, and soil data. For metadata on each view and the data package overall, refer to the NETN_FHM_2006_2026_metadata.xml file in the data package. A more readable version of the metadata is also available on NPS DataStore: <a href="https://irma.nps.gov/DataStore/Reference/Profile/2315861">NETN Forest Data Package</a>. Clicking on an individual view and selecting the "Show Data Table Info" button gives you definitions of the columns in an individual view.
+
+<details open><summary class = 'drop'>Option 1</summary>
+To import data using the default settings (i.e. run `importData()` with no arguments), you must have the NETN SQL database installed on your local machine with the latest local instance. This is largely for internal NPS use. 
+
+<p class = 'fxn'>Import data using default SQL database connection</p>
+```{r eval = F}
+importData()
+```
+</details>
+<details open><summary class = 'drop'>Option 2</summary>
+In most cases, you'll import NETN forest data using the csv files in the zipped data package, which can be downloaded on NPS Data Store: <a href="https://irma.nps.gov/DataStore/Reference/Profile/2315861">NETN Forest Data Package</a>.
+<p class = 'fxn'>
+Import data via .csv files into the VIEWS_NETN environment. The path should be where csvs are on your machine or server.</p>
+```{r, eval = F, results = 'hide'}
+importCSV(path = "./data/", zip_name = "NETN_Forest_20260827.zip") 
+# update path to location on your computer
+```
+
+<p class = 'fxn'>Another approach is to use the NPSutils package to download the data package in R, and then import the csvs.</p>
+```{r, eval = F, results = 'hide'}
+pak::pkg_install("doi-nps/NPSutils")
+NPSutils::get_data_package(2315861)
+importCSV("./data/2315861")
+```
+
+```{r, eval = T, results = 'hide', include = F}
+importCSV("../data/2315861") 
+# update path to location on your computer
+```
+
+</details>
+
+<h3><b>Step 6. Play with the data</b></h3>
+Once you've loaded the `forestNETN` package and have imported the data, you can look at the individual views with the following code: 
+
+```{r results = 'hide', eval = F}
+# See list of views
+names(VIEWS_NETN)
+
+# See first 6 rows of Tree Data
+head(VIEWS_NETN$TreesByEvent_NETN)
+
+# View the Seedling Data
+View(VIEWS_NETN$MicroplotSeedlings_NETN)
+
+# Check structure of the stand info view
+str(VIEWS_NETN$StandInfoPhotos_NETN)
+```
+
+While this approach works, the easier approach is to use the "join" functions in the R pacakge, which access the same files, but allow you to query data based on the park, years sample, species type, etc. See specific join tabs on how to use the various functions.
+
+#### Getting Help
+<h4><b>Getting (and improving) help</b></h4>
+The functions in `forestNETN` have help documentation like any R package. To view the help, you can go to the Packages tab and click on forestNETN. That will show you all the functions in the package. Clicking on individual functions will take you to the help documentation for that function. 
+
+<p class = 'fxn'>You can also see the help of a function by running, for example: </p>
+```{r, class.source = 'indent', eval = F}
+?importCSV
+```
+
+<p class = 'fxn'>If `forestNETN` isn't loaded yet, you'd run: </p>
+```{r, class.source = 'indent', eval = F}
+?forestNETN::importCSV
+```
+
+Each function's help includes a Description, Usage (i.e. function arguments and their defaults), Argument options/definitions, and several examples showing how the function can be used. 
+
+<b><span style='color:red;'>This is where you come in! If you notice typos or can think of better descriptions, examples, error messages, etc., please send them my way!</b></span> 
+
+Finally, if you ever want to peak under the hood at the function, you can view it several ways. 
+<ol>
+<li>Keep F2 key pressed and click on the function name in R. This trick works for many but not all functions in R.</li>
+<li>View code in the <a href="https://github.com/KateMMiller/forestNETN/tree/main">GitHub katemmiller/forestNETN repo</a>. The functions are in the R folder. 
+
+If you want to use the print_head() function that shows output in later tabs, run the code below. This function makes the results print cleaner than if you just run `head(dataframe)`, which is also fine.
+```{r}
+print_head <- function(df){
+  knitr::kable(df[1:6,]) |> #, table.attr = "style='width:60%;'") |> 
+    kableExtra::kable_classic(full_width = T, font_size = 12, 
+                              bootstrap_options = c("condensed")) |> 
+    kableExtra::scroll_box(width = "900px")
+}
+```
+
+### Join Functions {.tabset}
+
+#### joinLocEvent {.tabset}
+This function compiles location and visit-level data about each plot, including years sampled, X/Y coordinates taken at the plot center, and notes about the site. This function is often used to join the results of other functions to, to ensure that all plots are represented in the final dataset.
+
+<p class='fxn'>Compile all visits that have occurred in ACAD</p>
+```{r}
+acad <- joinLocEvent(park = "ACAD")
+```
+
+<p class='fxn'>Compile the most recent sample of each plot in ACAD</p>
+Note that in 2021, two panels were sampled. To get the most recent survey of each plot, the 3rd panel should be dropped.
+```{r}
+acad4yr <- joinLocEvent(park = "ACAD", from = 2023, to = 2026) |> 
+  dplyr::filter(!(SampleYear %in% 2021 & PanelCode %in% 3))
+
+print_head(acad4yr[,1:24]) # dropping long text fields
+```
+
+<p class='fxn'>Compile the most recent sample of each plot in ACAD, excluding stunted woodlands.</p> 
+```{r}
+acad4yr <- joinLocEvent(park = "ACAD", from = 2023, to = 2026) |> 
+  dplyr::filter(IsStuntedWoodland == FALSE)
+
+print_head(acad4yr[,1:24]) # dropping long text fields
+```
+
+#### joinAdditionalSpecies
+Compiles a list of additional species, which are species detected on the plot during a timed 15-minute search of the plot, and only includes species not detected in other protocol modules (i.e. microplots or quadrats).
+
+<p class='fxn'>View additional species for all plots in WEFA</p>
+```{r}
+wefa <- joinAdditionalSpecies(park = "WEFA")
+print_head(wefa)
+```
+
+#### joinCWDData
+Compiles coarse wood debris (CWD) volumn data (m3/ha). Coarse woody debris is sampled along three 15m line-intercept transects per plot. 
+
+<p class='fxn'>View CWD volume for all plots in ACAD</p>
+```{r}
+acad <- joinCWDData(park = "ACAD")
+print_head(acad)
+
+```
+
+<p class='fxn'>View CWD volume for the most recent survey of plots in MABI outputting in ft3/acre</p>
+```{r}
+mabi_ac <- joinCWDData(park = "MABI", from = 2023, to = 2026, units = "acres")
+print_head(mabi_ac)
+```
+
+#### joinMicroSaplings
+Compiles sapling data collected within three 2-m radius microplots on the plot. Saplings are >=1cm DBH and <10cm DBH.
+<p class='fxn'>View sapling data for all plots in ACAD</p>
+```{r}
+acad <- joinMicroSaplings(park = "ACAD")
+print_head(acad)
+```
+
+<p class='fxn'>View sapling data for native canopy-forming species only for all plots in ACAD</p>
+```{r}
+acad_natcan <- joinMicroSaplings(park = "ACAD", speciesType = "native", canopyForm = "canopy")
+print_head(acad_natcan)
+```
+
+#### joinMicroSeedlings
+Compiles seedling data collected within three 2-m radius microplots on the plot. Seedlings are >=15cm tall and <1cm DBH, and are tallied by size class.
+
+<p class='fxn'>View seedling data for all plots in SARA</p>
+```{r}
+sara <- joinMicroSeedlings(park = "SARA")
+print_head(sara)
+```
+
+<p class='fxn'>View sapling data for native canopy-forming species only for all plots in SARA</p>
+```{r}
+sara_natcan <- joinMicroSaplings(park = "SARA", speciesType = "native", canopyForm = "canopy")
+print_head(sara_natcan)
+```
+
+#### joinRegenData
+This function combines the sapling and seedling data from the previous 2 functions and also calculates a regeneration stocking index.
+
+<p class='fxn'>View regeneration data for all plots in ACAD</p>
+```{r}
+acad <- joinRegenData(park = "ACAD")
+print_head(acad)
+```
+
+<p class='fxn'>View sapling data for native canopy-forming species only for all plots in ACAD</p>
+```{r}
+acad_natcan <- joinRegenData(park = "ACAD", speciesType = "native", canopyForm = "canopy")
+print_head(acad_natcan)
+```
+
+#### joinMicroNotes
+Compiles any notes written about the microplots.
+<p class='fxn'>View sapling data for most recent survey of plots in MORR</p>
+```{r}
+morr <- joinMicroNotes(park = "MORR", from = 2023, to = 2026)
+head(morr)
+```
+
+#### joinMicroShrubData
+Compiles shrub and woody vine percent cover data estimated in three 2-m radius microplots. Shrubs must be >=30cm tall to be recorded. Vine cover is only estimated up to 2m tall.
+<p class='fxn'>View shrub data for all plots in ACAD</p>
+```{r}
+acad <- joinMicroShrubData(park = "ACAD")
+print_head(acad)
+```
+
+<p class='fxn'>View shrub data for invasive species only for all plots in SARA from most recent survey of plots</p>
+```{r}
+sara_exo <- joinMicroShrubData(park = "SARA", speciesType = "invasive")
+print_head(sara_exo)
+```
+
+#### joinQuadData
+Compiles quadrat characteristic cover data collected in eight 1m2 quadrats. 
+
+<p class='fxn'>View quadrat characteristic data for the most recent survey of plots in ROVA</p>
+```{r}
+rova <- joinMicroSaplings(park = "ROVA", from = 2023, to = 2026)
+print_head(rova)
+```
+
+#### joinQuadSpecies
+Compiles quadrat species cover data collected in eight 1m2 quadrats from the ground up to 1.5m. 
+<p class='fxn'>View quadrat species data for the most recent survey of plots in ACAD</p>
+```{r}
+acad_q4yr <- joinQuadSpecies(park = "ACAD", from = 2023, to = 2026) 
+print_head(acad_q4yr)
+```
+
+#### joinQuadNotes
+Compiles notes recorded in quadrats.
+<p class='fxn'>View quadrat notes for the most recent survey of plots in ROVA</p>
+```{r}
+rova <- joinQuadNotes(park = "ROVA", from = 2023, to = 2026)
+print_head(rova)
+```
+
+#### joinSoilLabData
+Compiles soil chemistry data derived from the lab. Note that soil chemistry data typically take about 6 months to be received from the lab. The latest year of available lab data is 2023. Starting in the 3rd cycle (2014 and later), only a subset of plots per year are sampled for soil chemistry. Note also that soil horizons are QCed based on %TC, so that horizons with >=20% TC are classified as O and horizons <20% TC are classified as A. If this check results in 2 samples with the same horizon, their chemistry is averaged weighted on the depth of each sample.
+
+<p class='fxn'>View soil chemistry data for plots in ACAD from 2014 and later.</p>
+```{r}
+acad_soil <- joinSoilLabData(park = "ACAD", from = 2014)
+print_head(acad_soil)
+```
+
+<p class='fxn'>View soil chemistry data of O horizon only for plots in ACAD from 2014 and later.</p>
+```{r}
+acad_soilO <- joinSoilLabData(park = "ACAD", layer = "O", from = 2014)
+print_head(acad_soilO)
+```
+
+#### joinSoilSampleData
+Compiles soil sample data collected in the field.
+
+<p class='fxn'>View soil sample data for plots in ACAD from 2014 and later.</p>
+```{r}
+acad_soil <- joinSoilSampleData(park = "ACAD", from = 2014)
+print_head(acad_soil)
+```
+
+#### joinStandData
+Compiles data collected at the stand level that may help identify groups or covariates for analyses or explain differences among plots.
+
+<p class='fxn'>View stand data for plots in SAGA from all years.</p>
+```{r}
+saga_stnd <- joinStandData(park = "SAGA")
+head(saga_stnd)
+```
+
+<p class='fxn'>View stand data for plots in ACAD from most recent survey of plots.</p>
+```{r}
+acad_stnd4 <- joinStandData(park = "ACAD", from = 2023, to = 2026) 
+head(acad_stnd4)
+```
+
+#### joinStandDisturbance
+Compiles major disturbances recorded on a plot, and that only occurred within the last 4 years of sampling. 
+<p class='fxn'>View stand disturbances recorded for plots in ACAD from all years.</p>
+```{r}
+acad_stnd <- joinStandDisturbance(park = "ACAD", from = 2023, to = 2026)
+print_head(acad_stnd)
+```
+
+<p class='fxn'>View stand disturbances for plots in ACAD from most recent survey of plots.</p>
+```{r}
+acad_stnd4 <- joinStandDisturbance(park = "ACAD", from = 2023, to = 2026) 
+print_head(acad_stnd4)
+```
+
+#### joinTreeData
+Compiles live and dead standing tree data for trees >=10cm tall. 
+<p class='fxn'>Join all tree data from all surveys of plots in ACAD.</p>
+```{r}
+acad_live <- joinTreeData(park = "ACAD")
+```
+
+<p class='fxn'>Join live tree data from the most recent survey of plots in ACAD.</p>
+```{r}
+acad_live <- joinTreeData(park = "ACAD", status = 'live', from = 2023, to = 2026) 
+print_head(acad_live)
+```
+
+<p class='fxn'>Join dead tree data from the most recent survey of plots in ACAD.</p>
+```{r}
+acad_dead <- joinTreeData(park = "ACAD", status = 'dead', from = 2023, to = 2026) 
+
+print_head(acad_dead)
+```
+
+#### joinTreeConditions
+Compiles tree conditions for live and dead standing trees. Only presence of cavities is recorded for dead trees.
+
+<p class='fxn'>Join tree condition data from the most recent survey of plots in ACAD.</p>
+```{r}
+acad_cond <- joinTreeConditions(park = "ACAD", from = 2023, to = 2026) 
+print_head(acad_cond)
+```
+
+<p class='fxn'>Join tree condition data for live trees only from the most recent survey of plots in ACAD.</p>
+```{r}
+acad_lcond <- joinTreeConditions(park = "ACAD", status = 'live', from = 2023, to = 2026) 
+print_head(acad_lcond)
+```
+
+
+#### joinTreeFoliageCond
+Compiles foliage conditions for live trees.
+<p class='fxn'>Join tree foliage condition data from the most recent survey of plots in ACAD.</p>
+```{r}
+acad_fcond <- joinTreeFoliageCond(park = "ACAD", from = 2023, to = 2026) 
+print_head(acad_fcond)
+```
+
+#### joinTreeNotes
+Compiles all notes recorded for trees.
+<p class='fxn'>Join tree notes from all visits to plots in ACAD.</p>
+```{r}
+acad_notes <- joinTreeNotes(park = "ACAD") 
+
+print_head(acad_notes)
+```
+
+#### joinVisitNotes
+Compiles all notes recorded for a given visit, including microplot, quadrat and tree notes.
+<p class='fxn'>Join visits notes from all plots in ACAD.</p>
+```{r}
+acad_vn <- joinVisitNotes(park = "ACAD") 
+
+print_head(acad_vn)
+```
+
+### Plot Functions {.tabset}
+
+#### plotTreeGrowth {.tabset}
+This function plots individual tree growth over time for all trees that were alive on their first record in the plot. Trees that started out as dead are not plotted. Each line on a graph represents the DBH of a live tree up until the first time it is classified as dead. Lines are color coded based on growth between visits to indicate shrinkage, slowing of growth, and/or fast growth. Each tick or X on the figure is a sample event for a given tree.
+
+<p class='fxn'>Make plot of red spruce for plots on Schoodic in panel 1</p>
+```{r}
+plotTreeGrowth(park = "ACAD", subunit = "Schoodic", panels = 1, species = "Picea rubens")
+```
+
+<p class='fxn'>Plot tree growth for Eastern MDI and balsam fir on plots with elevated mortality</p>
+```{r, fig.height=6, fig.width=10}
+plotTreeGrowth(park = "ACAD", subunit = "MDI_East", species = "Abies balsamea", elev_mort = TRUE)
+```
+
+<p class='fxn'>Plot growth for specific plots</p>
+```{r}
+plotTreeGrowth(plotName = c("ACAD-035", "ACAD-046"))
+```
+
+<p class='fxn'>Plot beech for MORR with vertical line where BLD was detected</p>
+```{r}
+ plotTreeGrowth(park = "MORR", from = 2006, to = 2026, species = "Fagus grandifolia", panels = 4) +
+   ggplot2::geom_vline(xintercept = 2019, lty = 'dashed')
+```
+
+<p class='fxn'>Plot multiple species of oaks in MORR</p>
+```{r, fig.height=6, fig.width=10}
+plotTreeGrowth(park = "MORR", from = 2006, to = 2026,
+   species = c("Quercus rubra", "Quercus velutina", "Quercus alba", "Quercus montana"))
+```
+
+<p class='fxn'>Plot hemlock in ROVA without plot title</p>
+```{r, fig.height=6, fig.width=10}
+plotTreeGrowth(park = "ROVA", species = "Tsuga canadensis", title = F)
+```
+
+<p class='fxn'>Plot ash in SARA</p>
+```{r, fig.height=6, fig.width=10}
+plotTreeGrowth(park = "SARA",
+  species = c("Fraxinus americana", "Fraxinus pennsylvanica", "Fraxinus nigra"))
+```
+
+<p class='fxn'>View plots with elevated mortality in SAGA</p>
+```{r, fig.height=6, fig.width=10}
+plotTreeGrowth(park = "SAGA", elev_mort = T)
+```
+ 
+<p class='fxn'>View MORR plots with elevated mortality not from windthrow</p>
+```{r, fig.height=6, fig.width=10}
+plotTreeGrowth(park = "MORR", elev_mort = T, exc_wind = T)
+```
+
+#### plotTreeMap
+This function converts tree distance and azimuth values to coordinates and plots the coordinates of live, dead, or excluded trees. Trees are color coded by status, and size is relative to DBH. Note that if multiple visits for a given plot are included in the function argument, only the most recent visit will be plotted. Therefore this function is best used on 1 to 4 year periods. Note that QA/QC events are not plotted with this function. Excluded trees are plotted with 10 cm DBH assigned, as these don't get a DBH measurement when excluded.
+
+<p class='fxn'>Make map for single plot</p>
+```{r}
+plotTreeMap(park = "ACAD", from = 2026, to = 2026, plotName = "ACAD-001")
+```
+
+<p class='fxn'>Make map for panel 2 in WEFA</p>
+```{r}
+plotTreeMap(park = "WEFA", from = 2022, to = 2025, panels = 2)
+```
+
+<p class='fxn'>Save pdfs for maps in panel 1 in most recent visit</p>
+```{r, eval = F}
+plotTreeMap(from = 2022, to = 2026, panels = 1, output_to = "file", path = "./data/")
+```
+
+#### theme_FHM
+This function customizes a theme for plotting NETN forest data, including removing the default panel grids from ggplot2 figures.
+
+<p class='fxn'>Using function in an example ggplot object</p>
+```{r}
+dbh_dist <- sumTreeDBHDist(park = "ACAD", status = "live", from = 2023, to = 2026) |>
+            tidyr::pivot_longer(cols = starts_with("dens"), names_to = "size_class", values_to = "density") |>
+            dplyr::arrange(Plot_Name, SampleYear, size_class)
+
+ggplot(dbh_dist, aes(x = size_class, y = density)) +
+       geom_bar(stat = 'identity', fill = 'dimgrey', position = position_dodge()) +
+       labs(x='Live tree DBH size classes (cm)', y='stems/ha') +
+       scale_x_discrete(labels=c('10 - 19.9', '20 - 29.9', '30 - 39.9', '40 - 49.9','50 - 59.9',
+                                 '60 - 69.9', '70 - 79.9', '80 - 89.9', '90 - 99.9', '100+')) +
+       theme(axis.text.x = element_text(angle = 90, vjust = 0.5)) +
+       theme_FHM()
+```
+
+### Sum functions {.tabset}
+#### sumQuadGuilds
+This function summarizes output from joinQuadData and calculates average cover and quadrat frequency for each guild. Average cover is corrected for number of quadrats sampled. Guilds are tree, shrub, forb, fern, and graminoid. If herbaceous guild is split, then cover of ferns does not overlap with cover of herbaceous. If herbaceous guild is not split, then cover of herbaceous guild includes fern and other herbaceous (but not graminoid) species cover. Only works for complete events, but does include plots where a few quadrats were not sampled. Germinants are not included in summary.
+
+<p class='fxn'>Compile invasive quad data for all parks and most recent survey. Keep ferns in with herbs</p>
+```{r}
+inv_guilds <- sumQuadGuilds(speciesType = 'invasive', from = 2023, to = 2026, splitHerb = FALSE)
+print_head(inv_guilds)
+```
+
+<p class='fxn'>Compile native quad data for more recent survey in ACAD, with ferns and forbs split in separate guilds</p>
+```{r}
+ACAD_guilds <- sumQuadGuilds(speciesType = 'native', from = 2023, to = 2026, splitHerb = TRUE)
+print_head(ACAD_guilds)
+```
+
+#### sumSpeciesList
+This function summarizes all species data collected in a plot visit, including live trees, microplots, quadrats, and additional species lists.
+
+<p class='fxn'>Compile number of invasive species found per plot from 2023 to 2026 for all parks.</p>
+```{r}
+inv_spp <- sumSpeciesList(speciesType = "invasive", from = 2023, to = 2026)
+print_head(inv_spp)
+```
+
+<p class='fxn'>Compile species list for plots sampled in SARA in 2022</p>
+```{r}
+SARA_spp <- sumSpeciesList(park = 'SARA', from = 2022)
+print_head(SARA_spp)
+```
+
+#### sumStrStage
+This function calculates structural stage metric from Ecological Integrity Scorecard, which assigns Pole, Mature, Late Successional, or Mosaic (i.e., none of the above) to each plot based on the percent of live basal area of canopy trees in pole, mature and large size classes. Plots must be closed-canopy forest to be classified for this metric. Therefore plots classified as Woodlands (ACAD only) or Early successional (SARA only) in the field are automatically assigned those classes in the calculation. 
+
+<p class='fxn'>Summarize structural stage for all parks all years</p>
+```{r}
+strstg <- sumStrStage()
+print_head(strstg)
+```
+
+<p class='fxn'>Summarize structural stage for MIMA from 2023 to 2026</p>
+```{r}
+strstg_mima <- sumStrStage(park = "MIMA", from = 2023, to = 2026)
+print_head(strstg_mima)
+```
+
+#### sumSapDBHDist
+This function calculates DBH distribution of live saplings by 1cm size classes. 
+<p class='fxn'>Summarize DBH distribution for all saplings in MORR for all cycles</p>
+```{r}
+sap_dist_morr <- sumSapDBHDist(park = "MORR")
+print_head(sap_dist_morr)
+```
+
+<p class='fxn'>Summarize DBH distribution for native saplings in ROVA from 2023 to 2026</p>
+```{r}
+sap_diam_dist <- sumSapDBHDist(park = 'ROVA', speciesType = 'native', from = 2023, to = 2026)
+print_head(sap_diam_dist)
+```
+
+#### sumTreeDBHDist
+This function calculates DBH distribution by 10cm size classes.
+
+<p class='fxn'>Summarize DBH distribution for all trees >= 10cm DBH in MORR for all cycles</p>
+```{r}
+tree_dist_morr <- sumTreeDBHDist(park = "MORR")
+print_head(tree_dist_morr)
+```
+
+<p class='fxn'>Summarize DBH distribution for native trees in ROVA from 2023 to 2026 using basal area</p>
+```{r}
+tree_diam_BA <- sumTreeDBHDist(park = 'ROVA', speciesType = 'native', from = 2023, to = 2026, units = 'BA')
+print_head(tree_diam_BA)
+```

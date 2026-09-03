@@ -1,0 +1,63 @@
+Package: forestNETN
+Type: Package
+Title: Package for importing, joining and querying NETN forest database tables
+Version: 1.08
+Author: Kate Miller
+Maintainer: Kate Miller <kathryn_miller@nps.gov>
+Description: This package contains functions that import database views from the NETN forest backend and or exported CSVs from the backend and provides functions to query and summarize NETN forest data.
+License: MIT + file LICENSE
+Depends:
+    R(>= 4.0)
+Collate: 
+    'exportCSV.R'
+    'prepTaxa.R'
+    'joinLocEvent.R'
+    'joinTreeData.R'
+    'joinTreeVineSpecies.R'
+    'joinQuadSpecies.R'
+    'joinMicroShrubData.R'
+    'joinMicroSeedlings.R'
+    'joinMicroSaplings.R'
+    'joinCWDData.R'
+    'joinAdditionalSpecies.R'
+    'exportNPSForVeg.R'
+    'importCSV.R'
+    'importData.R'
+    'joinMicroNotes.R'
+    'joinQuadData.R'
+    'joinQuadNotes.R'
+    'joinRegenData.R'
+    'joinSoilLabData.R'
+    'joinSoilSampleData.R'
+    'joinStandData.R'
+    'joinStandDisturbance.R'
+    'joinTreeConditions.R'
+    'joinTreeFoliageCond.R'
+    'joinTreeNotes.R'
+    'joinVisitNotes.R'
+    'plotTreeGrowth.R'
+    'plotTreeMap.R'
+    'sumQuadGuilds.R'
+    'sumSapDBHDist.R'
+    'sumSpeciesList.R'
+    'sumStrStage.R'
+    'sumTreeDBHDist.R'
+    'theme_FHM.R'
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.3
+Imports: 
+    dplyr,
+    ggplot2,
+    magrittr,
+    purrr,
+    stringr,
+    tidyr,
+    tidyselect
+Suggests: 
+    cowplot,
+    DBI,
+    dbplyr,
+    ggrepel,
+    odbc,
+    zip

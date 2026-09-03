@@ -1,0 +1,42 @@
+[
+  {
+    "name": "forestNETN",
+    "organization": "NATIONAL PARK SERVICE",
+    "description": "R package for importing, joining and querying Northeast Temperate Network forest data
+    "version": "1.08",
+    "status": "ongoing development",
+    "permissions": {
+      "usageType": "openSource",
+      "licenses": [
+        {
+          "name": "Public Domain, CC0-1.0",
+          "URL": "https://github.com/DOI-NPS/forestNETN"
+        }
+      ]
+    },
+    "homepageURL": "https://github.com/DOI-NPS/forestNETN",
+    "downloadURL": "https://github.com/DOI-NPS/forestNETN",
+    "disclaimerURL": "hhtps://github.com/DOI-NPS/forestNETN/blob/main/LICENSE",
+    "repositoryURL": "https://github.com/DOI-NPS/forestNETN",
+    "vcs": "git",
+    "laborHours": 1,
+    "tags": [
+      "NRSS",
+      "IMD",
+      "Northeast Temperate Network",
+      "NETN"
+      "forest"
+    ],
+    "languages": [
+      "R",
+      "python"
+    ],
+    "contact": {
+      "name": "Kate Miller",
+      "email": "kathryn_miller@nps.gov"
+    },
+    "date": {
+      "metadataLastUpdated": "2026-09-03
+    }
+  }
+]
