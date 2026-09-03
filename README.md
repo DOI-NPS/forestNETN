@@ -1,4 +1,4 @@
-# climateNETN
+# forestNETN
 This package contains functions that import database views from the NETN forest SQL database and or 
 CSVs in the NETN forest data package and provides functions to query, summarize, and visualize NETN forest data.
 The R package can be installed using `pak::pkg_install('doi-nps/forestNETN')`. Previous archived 
