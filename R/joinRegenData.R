@@ -70,12 +70,13 @@
 #'
 #' @param numMicros Allows you to select 1, 2, or 3 microplots of data to summarize
 #'
-#' @param units Calculates seedling and sapling densities based on different units.
+#' @param units Calculates seedling and sapling densities based on different units. 
+#' By default, the stocking index is calculated on the McWilliams 100pt scale.
 #' \describe{
 #' \item{"micro"}{Default. Returns seedling and sapling densities per microplot.}
-#' \item{"sq.m"}{Returns seedling and sapling densities per square meter}
-#' \item{"ha"}{Returns seedling and sapling densities per hectare}
-#' \item{"acres"}{Returns densities per acre}
+#' \item{"sq.m"}{Returns seedling and sapling densities per square meter.}
+#' \item{"ha"}{Returns seedling and sapling densities per hectare.}
+#' \item{"acres"}{Returns densities per acre.}
 #'}
 #'
 #' @param ... Other arguments passed to function.

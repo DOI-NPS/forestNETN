@@ -136,7 +136,7 @@ View(VIEWS_NETN$MicroplotSeedlings_NETN)
 str(VIEWS_NETN$StandInfoPhotos_NETN)
 ```
 
-While this approach works, the easier approach is to use the "join" functions in the R pacakge, which access the same files, but allow you to query data based on the park, years sample, species type, etc. See specific join tabs on how to use the various functions.
+While this approach works, the easier approach is to use the "join" functions in the R package, which access the same files, but allow you to query data based on the park, years sample, species type, etc. See specific join tabs on how to use the various functions.
 
 #### Getting Help
 <h4><b>Getting (and improving) help</b></h4>
@@ -184,8 +184,7 @@ acad <- joinLocEvent(park = "ACAD")
 <p class='fxn'>Compile the most recent sample of each plot in ACAD</p>
 Note that in 2021, two panels were sampled. To get the most recent survey of each plot, the 3rd panel should be dropped.
 ```{r}
-acad4yr <- joinLocEvent(park = "ACAD", from = 2023, to = 2026) |> 
-  dplyr::filter(!(SampleYear %in% 2021 & PanelCode %in% 3))
+acad4yr <- joinLocEvent(park = "ACAD", from = 2023, to = 2026) 
 
 print_head(acad4yr[,1:24]) # dropping long text fields
 ```
@@ -246,9 +245,9 @@ sara <- joinMicroSeedlings(park = "SARA")
 print_head(sara)
 ```
 
-<p class='fxn'>View sapling data for native canopy-forming species only for all plots in SARA</p>
+<p class='fxn'>View seedling data for native canopy-forming species only for all plots in SARA</p>
 ```{r}
-sara_natcan <- joinMicroSaplings(park = "SARA", speciesType = "native", canopyForm = "canopy")
+sara_natcan <- joinMicroSeedlings(park = "SARA", speciesType = "native", canopyForm = "canopy")
 print_head(sara_natcan)
 ```
 
@@ -294,7 +293,7 @@ Compiles quadrat characteristic cover data collected in eight 1m2 quadrats.
 
 <p class='fxn'>View quadrat characteristic data for the most recent survey of plots in ROVA</p>
 ```{r}
-rova <- joinMicroSaplings(park = "ROVA", from = 2023, to = 2026)
+rova <- joinQuadData(park = "ROVA", from = 2023, to = 2026)
 print_head(rova)
 ```
 
@@ -315,11 +314,11 @@ print_head(rova)
 ```
 
 #### joinSoilLabData
-Compiles soil chemistry data derived from the lab. Note that soil chemistry data typically take about 6 months to be received from the lab. The latest year of available lab data is 2023. Starting in the 3rd cycle (2014 and later), only a subset of plots per year are sampled for soil chemistry. Note also that soil horizons are QCed based on %TC, so that horizons with >=20% TC are classified as O and horizons <20% TC are classified as A. If this check results in 2 samples with the same horizon, their chemistry is averaged weighted on the depth of each sample.
+Compiles soil chemistry data derived from the lab. Note that soil chemistry data typically take about 6 months to be received from the lab. The latest year of available lab data is 2025. From the 3rd to 5th cycle (2014 - 2025), 8% of plots were sampled for soil chemistry, with all plots being sampled once over that period. Starting in 2026, half of ACAD plots will be sampled per year for the next 2 cycles. Note also that soil horizons are QCed based on %TC, so that horizons with >=20% TC are classified as O and horizons <20% TC are classified as A. If this check results in 2 samples with the same horizon, their chemistry is averaged weighted on the depth of each sample.
 
-<p class='fxn'>View soil chemistry data for plots in ACAD from 2014 and later.</p>
+<p class='fxn'>View soil chemistry data for plots in ACAD from 2007 and later.</p>
 ```{r}
-acad_soil <- joinSoilLabData(park = "ACAD", from = 2014)
+acad_soil <- joinSoilLabData(park = "ACAD", from = 2007)
 print_head(acad_soil)
 ```
 
@@ -344,20 +343,20 @@ Compiles data collected at the stand level that may help identify groups or cova
 <p class='fxn'>View stand data for plots in SAGA from all years.</p>
 ```{r}
 saga_stnd <- joinStandData(park = "SAGA")
-head(saga_stnd)
+print_head(saga_stnd[,c(1:26, 30:ncol(saga_stnd))]) # dropping notes fields
 ```
 
 <p class='fxn'>View stand data for plots in ACAD from most recent survey of plots.</p>
 ```{r}
 acad_stnd4 <- joinStandData(park = "ACAD", from = 2023, to = 2026) 
-head(acad_stnd4)
+print_head(acad_stnd4)
 ```
 
 #### joinStandDisturbance
 Compiles major disturbances recorded on a plot, and that only occurred within the last 4 years of sampling. 
 <p class='fxn'>View stand disturbances recorded for plots in ACAD from all years.</p>
 ```{r}
-acad_stnd <- joinStandDisturbance(park = "ACAD", from = 2023, to = 2026)
+acad_stnd <- joinStandDisturbance(park = "ACAD")
 print_head(acad_stnd)
 ```
 
