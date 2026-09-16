@@ -17,7 +17,10 @@
 #' @description This function exports NETN forest data that are formatted to match flat
 #' files that can be imported into the NPSForVeg R package. Abandoned plots, QAQC visits,
 #' partial visits (e.g., ACAD-029-2010), and non-VS plots are not included in the export.
-#' Note the every year after 2024, the cycles code will need to be updated.
+#' 
+#' @param cycle_df Quoted path to updated Cycles.csv, which can either be updated manually,
+#' or if left blank, hard coded in function starting at line 221. 
+#' **Note the every year after 2026, either the Cycles.csv or the cycles code needs to be updated.**
 #'
 #' @param keep Logical. If TRUE (default), assigns NPSForVeg objects to global environment.
 #' If FALSE, does not return output, which is useful when export = T.
@@ -33,20 +36,20 @@
 #'
 #' @examples
 #' \dontrun{
-#' # RUN FIRST
 #' library(forestNETN)
 #' importData()
 #' filepath <- "./data/NPSForVeg/NETN"
 #' exportNPSForVeg(export = T, path = filepath, keep = T)
 #' exportNPSForVeg(export = T, path = filepath, keep = F)
 #' exportNPSForVeg(export = T, path = filepath, keep = F, zip = T)
+#' exportNPSForVeg(cycle_df = "./data/Cycles.csv", path = "./data/", zip = T)
 #'
 #' }
 #'
 #' @export
 #'
 
-exportNPSForVeg <- function(export = T, path = NA, zip = F, keep = T){
+exportNPSForVeg <- function(cycle_df = NA, export = T, path = NA, zip = F, keep = T){
 
   #---- Error handling ----
   stopifnot(class(export) %in% "logical")
@@ -79,6 +82,12 @@ exportNPSForVeg <- function(export = T, path = NA, zip = F, keep = T){
     if(!grepl("/$", pathn)){pathn <- paste0(pathn, "\\")}
     }
 
+  # Read in Cycles.csv and add tryCatch if not found
+  if(!is.na(cycle_df)){
+  cycles <- tryCatch(read.csv(cycle_df),
+                     error = function(e){stop("Cycles.csv not found. Please check that path and file name are correct.")})
+  }
+  
   if(export == FALSE){print("Compiling NPSForVeg data", quote = F)}
 
   maxpb = ifelse(export == FALSE, 10, 20)
@@ -240,6 +249,7 @@ exportNPSForVeg <- function(export = T, path = NA, zip = F, keep = T){
     YearEnd =   c(2009, 2013, 2017, 2022, 2026, 2026),
     PanelStart = c(1, 1, 1, 1, 1, 1))
   
+  if(is.na(cycle_df)){
   cycles <- rbind(
     data.frame(Unit_Code = rep("ACAD", nrow(ACAD_cycles)), ACAD_cycles),
     data.frame(Unit_Code = rep("MABI", nrow(NHP13_cycles)), NHP13_cycles),
@@ -249,7 +259,7 @@ exportNPSForVeg <- function(export = T, path = NA, zip = F, keep = T){
     data.frame(Unit_Code = rep("SAGA", nrow(NHP13_cycles)), NHP13_cycles),
     data.frame(Unit_Code = rep("SARA", nrow(NHP13_cycles)), NHP13_cycles),
     data.frame(Unit_Code = rep("WEFA", nrow(NHP24_cycles)), NHP24_cycles))
-
+ }
   #---- CommonNames ----
   plants1 <- prepTaxa() |>
     mutate(Woody = ifelse(Tree + TreeShrub + Shrub + Vine > 0, TRUE, FALSE),
