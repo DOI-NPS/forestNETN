@@ -218,37 +218,37 @@ exportNPSForVeg <- function(export = T, path = NA, zip = F, keep = T){
   #---- Cycles ----
   # Cycles by park
   ACAD_cycles <- data.frame(
-    Cycle = c(1, 2, 3, 4, 5),
-    Name = c("Cycle 1", "Cycle 2", "Cycle 3", "Cycle 4", "Latest Data"),
-    YearStart = c(2006, 2010, 2014, 2018, 2021),
-    YearEnd =   c(2009, 2013, 2017, 2021, 2024),
-    PanelStart = c(1, 1, 1, 1, 4))
+    Cycle = c(1, 2, 3, 4, 5, 6),
+    Name = c("Cycle 1", "Cycle 2", "Cycle 3", "Cycle 4", "Cycle 5", "Latest Data"),
+    YearStart = c(2006, 2010, 2014, 2018, 2022, 2023),
+    YearEnd =   c(2009, 2013, 2017, 2021, 2025, 2026),
+    PanelStart = c(1, 1, 1, 1, 1, 2))
 
   #MABI MIMA SAGA SARA
   NHP13_cycles <- data.frame(
-    Cycle = c(1, 2, 3, 4, 5),
-    Name = c("Cycle 1", "Cycle 2", "Cycle 3", "Cycle 4", "Latest Data"),
-    YearStart = c(2006, 2010, 2014, 2018, 2022),
-    YearEnd =   c(2009, 2013, 2017, 2022, 2024),
-    PanelStart = c(1, 1, 1, 1, 3))
+    Cycle = c(1, 2, 3, 4, 5, 5),
+    Name = c("Cycle 1", "Cycle 2", "Cycle 3", "Cycle 4", "Cycle 5", "Latest Data"),
+    YearStart = c(2006, 2010, 2014, 2018, 2023, 2023),
+    YearEnd =   c(2009, 2013, 2017, 2022, 2026, 2026),
+    PanelStart = c(1, 1, 1, 1, 1, 1))
 
   #MORR ROVA WEFA
   NHP24_cycles <- data.frame(
-    Cycle = c(1, 2, 3, 4, 5),
-    Name = c("Cycle 1", "Cycle 2", "Cycle 3", "Cycle 4", "Latest Data"),
-    YearStart = c(2006, 2010, 2014, 2018, 2022),
-    YearEnd =   c(2009, 2013, 2017, 2022, 2024),
-    PanelStart = c(1, 1, 1, 1, 4))
-
+    Cycle = c(1, 2, 3, 4, 5, 5),
+    Name = c("Cycle 1", "Cycle 2", "Cycle 3", "Cycle 4", "Cycle 5", "Latest Data"),
+    YearStart = c(2006, 2010, 2014, 2018, 2023, 2023),
+    YearEnd =   c(2009, 2013, 2017, 2022, 2026, 2026),
+    PanelStart = c(1, 1, 1, 1, 1, 1))
+  
   cycles <- rbind(
-    data.frame(Unit_Code = rep("ACAD", 5), ACAD_cycles),
-    data.frame(Unit_Code = rep("MABI", 5), NHP13_cycles),
-    data.frame(Unit_Code = rep("MIMA", 5), NHP13_cycles),
-    data.frame(Unit_Code = rep("MORR", 5), NHP24_cycles),
-    data.frame(Unit_Code = rep("ROVA", 5), NHP24_cycles),
-    data.frame(Unit_Code = rep("SAGA", 5), NHP13_cycles),
-    data.frame(Unit_Code = rep("SARA", 5), NHP13_cycles),
-    data.frame(Unit_Code = rep("WEFA", 5), NHP24_cycles))
+    data.frame(Unit_Code = rep("ACAD", nrow(ACAD_cycles)), ACAD_cycles),
+    data.frame(Unit_Code = rep("MABI", nrow(NHP13_cycles)), NHP13_cycles),
+    data.frame(Unit_Code = rep("MIMA", nrow(NHP13_cycles)), NHP13_cycles),
+    data.frame(Unit_Code = rep("MORR", nrow(NHP24_cycles)), NHP24_cycles),
+    data.frame(Unit_Code = rep("ROVA", nrow(NHP24_cycles)), NHP24_cycles),
+    data.frame(Unit_Code = rep("SAGA", nrow(NHP13_cycles)), NHP13_cycles),
+    data.frame(Unit_Code = rep("SARA", nrow(NHP13_cycles)), NHP13_cycles),
+    data.frame(Unit_Code = rep("WEFA", nrow(NHP24_cycles)), NHP24_cycles))
 
   #---- CommonNames ----
   plants1 <- prepTaxa() |>
