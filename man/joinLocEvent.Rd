@@ -78,7 +78,7 @@ cycle3 <- joinLocEvent(park = c("MABI", "SAGA"), from = 2014, to = 2017) # all p
 # Select data from plots that had a QA/QC event in ACAD in 2018
 ACAD_data <- joinLocEvent(park = 'ACAD', QAQC = TRUE, from = 2018)
 QAQC_plots <- ACAD_data$Plot_Name[which(ACAD_data$Event_QAQC == TRUE)]
-ACAD_QAQC <- ACAD_data \%>\% filter(Plot_Name \%in\% QAQC_plots)
+ACAD_QAQC <- ACAD_data |> filter(Plot_Name \%in\% QAQC_plots)
 }
 
 }

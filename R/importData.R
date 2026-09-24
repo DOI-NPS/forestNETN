@@ -3,10 +3,9 @@
 #' @description This function imports all views in the ANALYSIS schema of the NETN_Forest backend. Each view
 #' is added to a VIEWS_NETN environment in your workspace, or to your global environment based on whether
 #' new_env = TRUE or FALSE. You must have the latest ODBC SQL driver installed for this function to
-#' work. It can be downloaded from: https://go.microsoft.com/fwlink/?linkid=2168524
+#' work. 
 #'
 #' @importFrom dplyr collect rename tbl
-#' @importFrom magrittr %>%
 #'
 #' @param instance Specify whether you are connecting to the local instance or server.
 #' \describe{
@@ -27,9 +26,6 @@
 #' \dontrun{
 #' # Import using default settings of local instance, server = 'localhost' and add VIEWS_NETN environment
 #' importData()
-#'
-#' # Import using computer name (# should be real numbers)
-#' importData(server = "INPNETN-######", new_env = TRUE)
 #'
 #' # Import from main database on server
 #' importData(server = "INP###########\\########", instance = "server", new_env = TRUE)
@@ -93,7 +89,7 @@ importData <- function(instance = c("local", "server"), server = NA, name = "NET
   view_import <- lapply(seq_along(view_list_db), function(x){
     setTxtProgressBar(pb, x)
     view <- view_list_db[x]
-    tab <- tbl(con, dbplyr::in_schema("ANALYSIS", view)) %>% collect() %>%
+    tab <- tbl(con, dbplyr::in_schema("ANALYSIS", view)) |> collect() |> 
       as.data.frame()
     return(tab)
   })

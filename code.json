@@ -3,7 +3,7 @@
     "name": "forestNETN",
     "organization": "NATIONAL PARK SERVICE",
     "description": "R package for importing, joining and querying Northeast Temperate Network forest data"
-    "version": "1.08",
+    "version": "1.09",
     "status": "ongoing development",
     "permissions": {
       "usageType": "openSource",

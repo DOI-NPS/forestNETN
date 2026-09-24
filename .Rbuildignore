@@ -3,7 +3,8 @@
 ^testing_scripts$
 ^data/.+$
 ^temp_scripts$
-^LICENSE\.md$
+^LICENSE
+\.md$
 [.]html$
 [.]rmd$
 ^docs/.+$

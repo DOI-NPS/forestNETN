@@ -2,7 +2,6 @@
 #'
 #' @importFrom dplyr filter full_join select
 #' @importFrom stringr str_pad
-#' @importFrom magrittr %>%
 #'
 #' @description This function combines location and event data. Must run importData first.
 #'
@@ -62,7 +61,7 @@
 #' # Select data from plots that had a QA/QC event in ACAD in 2018
 #' ACAD_data <- joinLocEvent(park = 'ACAD', QAQC = TRUE, from = 2018)
 #' QAQC_plots <- ACAD_data$Plot_Name[which(ACAD_data$Event_QAQC == TRUE)]
-#' ACAD_QAQC <- ACAD_data %>% filter(Plot_Name %in% QAQC_plots)
+#' ACAD_QAQC <- ACAD_data |> filter(Plot_Name %in% QAQC_plots)
 #' }
 #'
 #' @export
